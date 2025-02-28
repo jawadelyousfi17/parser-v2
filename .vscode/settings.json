@@ -12,6 +12,8 @@
         "utility": "c",
         "vector": "c",
         "parser.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "__locale": "c",
+        "ios": "c"
     }
 }

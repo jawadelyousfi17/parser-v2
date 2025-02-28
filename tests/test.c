@@ -105,14 +105,18 @@ int main(int ac, char **av, char **env)
 
     // atexit(__f);
 
-    if (1)
+    while (1)
     {
-        // char *input = (char *) strdup("dwdw");
-        // return 0;
-        char *buff = malloc(100);
+        // readline("< ");
+        // printf("[%s]\n", in);
+        ft_malloc(10000, 0);
+            // ft_malloc(0, 1);
 
-        char **splited = ft_split_commands("ls -la");
+        // continue;
+        char **splited = ft_split_commands("ls < ls > ls < ls > ks");
 
+        
+        _display_2d_array(splited);
         if (splited == NULL)
         {
             if (errno != 0)
@@ -124,14 +128,15 @@ int main(int ac, char **av, char **env)
 
         if (tokens == NULL)
         {
-            perror("ddError");
+            perror("Lexer Error");
             return 0;
         }
 
         if (check_syntax(tokens))
         {
             printf(RED "\n%s\n\n" RESET, check_syntax(tokens));
-            return 0;
+            ft_malloc(0, 1);
+            continue;
         }
 
         if (ft_expand_data(tokens) == 0)
@@ -149,6 +154,8 @@ int main(int ac, char **av, char **env)
         _display_list(tokens);
 
         ft_malloc(0, 1);
+
+        usleep(1000);
     }
     return 0;
 }

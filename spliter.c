@@ -2,16 +2,16 @@
 
 int count_apparence(char c, char *s)
 {
-	int r;
+    int r;
 
-	r = 0;
-	while (*s)
-	{
-		if (*s == c)
-			r++;
-		s++;
-	}
-	return r;
+    r = 0;
+    while (*s)
+    {
+        if (*s == c)
+            r++;
+        s++;
+    }
+    return r;
 }
 
 static int skip_split_pipe_redirect(char **s, t_list **head)
@@ -31,7 +31,7 @@ static int skip_split_pipe_redirect(char **s, t_list **head)
                 i++;
         else
             i++;
-        if(ft_lstadd_back(head, ft_lstnew(ft_substr(*s, 0, i))) == 0)
+        if (ft_lstadd_back(head, ft_lstnew(ft_substr(*s, 0, i))) == 0)
             return 0;
         (*s) += i;
     }
@@ -111,6 +111,7 @@ char **ft_split_commands(char *s)
     result = (char **)ft_malloc(sizeof(char **) * (size + 1), 0);
     if (result == NULL)
         return NULL;
+    i = 0;
     while (commands)
     {
         result[i] = ft_strdup((char *)commands->content);
@@ -120,3 +121,4 @@ char **ft_split_commands(char *s)
     }
     return result;
 }
+
