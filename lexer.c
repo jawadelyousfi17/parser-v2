@@ -23,7 +23,7 @@ static int is_start_width(char *source, char *to_find)
 
 static int is_redirection(t_tokens token)
 {
-    return (token == REDIRECT_INPUT || token == REDIRECT_OUTPUT || token == APPEND || token == HERE_DOC);
+    return (token == REDIRECT_INPUT || token == REDIRECT_OUTPUT || token == APPEND);
 }
 
 static int is_file_limiter(t_tokens token)
@@ -116,7 +116,7 @@ t_list *_ft_lexer(char **s)
         return NULL;
     while (s[i])
     {
-        token = (t_token *)ft_malloc(sizeof(t_token *), 0);
+        token = (t_token *)ft_malloc(sizeof(t_token), 0);
         if (token == NULL)
             return NULL;
         token->value = ft_strdup(s[i]);
@@ -129,4 +129,113 @@ t_list *_ft_lexer(char **s)
         history[0] = token->token;
     }
     return tokens;
+}
+
+t_tokens hl_tokenizer(tt_token *token, tt_token *prev)
+{
+    if (token->type == OPERATOR)
+    {
+        if (is_equal(token->value, "<"))
+            return REDIRECT_INPUT;
+        if (is_equal(token->value, ">"))
+            return REDIRECT_OUTPUT;
+        if (is_equal(token->value, ">>"))
+            return APPEND;
+        if (is_equal(token->value, "<<"))
+            return HERE_DOC;
+        if (is_equal(token->value, "|"))
+            return PIPE;
+        return ERROR_TOKEN;
+    }
+    if (prev && is_redirection(prev->type))
+        return FILE_T;
+    if (prev && prev->type == HERE_DOC)
+        return LIMITER;
+    return COMMAND;
+}
+
+int ft_lexing(tt_token **tokens)
+{
+    int i;
+
+    i = 0;
+    while (tokens[i])
+    {
+        if (i > 0)
+            tokens[i]->type = hl_tokenizer(tokens[i], tokens[i - 1]);
+        else
+            tokens[i]->type = hl_tokenizer(tokens[i], NULL);
+        if (tokens[i]->type == ERROR_TOKEN)
+        {
+            return 0;
+        }
+        i++;
+    }
+    return 1;
+}
+
+char  **hl_jn(tt_token **token, int start, int end)
+{
+    char **r;
+    int count;
+
+    count = 0;
+    int i = start;
+    while (i < end)
+    {
+        if (token[i]->type == COMMAND)
+        count++;
+        i++;
+    }
+    if (!count)
+    return (char **)0x1;
+    r = ft_malloc(sizeof(char *) * (count + 1), 0);
+    if (!r)
+        return NULL;
+    count = 0;
+    i = start;
+    while (i < end)
+    {
+        if (token[i]->type == COMMAND)
+            r[count++] = token[i]->value;
+        i++;
+    }
+    i = start;
+    r[count] = NULL;
+    int in = 0;
+    while (i < end)
+    {
+        if (token[i]->type == COMMAND && !in)
+        {
+            in = 1;
+            token[i]->type = ARG;
+            token[i]->splited = r;
+        }
+        else if (token[i]->type == COMMAND && in)
+        {
+            token[i]->type = NO;
+        }
+        i++;
+    }
+    
+    return r;
+}
+
+int ft_join_cmd(tt_token **token)
+{
+    int i = 0;
+    int start = i;
+    while (token[i])
+    {
+        start = i;
+        while (token[i] && token[i]->type != PIPE)
+        {
+            i++;
+        }
+        if (hl_jn(token, start, i) == NULL)
+            return 0;
+        if (token[i])
+            i++;
+    }
+    return 1;
 }

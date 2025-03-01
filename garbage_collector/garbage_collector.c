@@ -4,7 +4,7 @@
 /* Garbage Collector Node */
 typedef struct s_collect
 {
-    void            *content;
+    void *content;
     struct s_collect *next;
 } t_collect;
 
@@ -61,25 +61,51 @@ t_collect *new_node(void *ptr)
  */
 void *ft_malloc(size_t size, int flag)
 {
-    static t_collect *head = NULL;
-    if (flag != 0)
+    static int index;
+    static int max_size ;
+    static void **collect;
+    void **new_collect;
+    int i;
+
+    if (!collect)
     {
-        lst_clear(head);
-        head = NULL; // Reset the static pointer after clearing
-        return NULL;
+        index = 0;
+        max_size = 2560000;
+        collect = malloc(max_size * sizeof(void *));
+        if (!collect) 
+            return NULL;
     }
-    void *ptr = malloc(size);
-    if (!ptr)
-        return NULL;
-    t_collect *node = new_node(ptr);
-    if (!node)
+
+    if (flag == 0)
     {
-        free(ptr);
-        return NULL;
+        if (index == max_size)
+        {
+            max_size *= 2;  // Double the size to minimize realloc calls
+            new_collect = realloc(collect, max_size * sizeof(void *));
+            if (!new_collect) 
+                return NULL;  // Keep the original memory on realloc failure
+            collect = new_collect;
+
+        }
+
+        collect[index] = malloc(size);
+        if (!collect[index]) 
+            return NULL;
+        
+        return collect[index++];
     }
-    ptr_add_back(&head, node);
-    return ptr;
+
+    for (i = 0; i < index; i++)
+        free(collect[i]);
+
+    free(collect);
+    collect = NULL;
+    index = 0;  // Reset index after freeing
+
+    return NULL;
 }
+
+
 
 /* Example usage */
 // int main(void)
@@ -90,7 +116,7 @@ void *ft_malloc(size_t size, int flag)
 //         snprintf(str1, 50, "Hello, Garbage Collector!");
 //         printf("%s\n", str1);
 //     }
-    
+
 //     int *array = ft_malloc(5 * sizeof(int), 0);
 //     if (array)
 //     {
@@ -100,9 +126,9 @@ void *ft_malloc(size_t size, int flag)
 //             printf("%d ", array[i]);
 //         printf("\n");
 //     }
-    
+
 //     /* Free all tracked allocations */
 //     ft_malloc(0, 1);
-    
+
 //     return 0;
 // }

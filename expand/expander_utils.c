@@ -14,7 +14,7 @@ static int add_to_ls(t_list **head, int *i, char *s, char qt)
     char *ss = ft_substr(s, *i - j, j);
     if (j)
     {
-        quote = (t_quote *)ft_malloc(sizeof(t_quote *), 0);
+        quote = (t_quote *)ft_malloc(sizeof(t_quote), 0);
         if (quote == NULL)
             return 0;
         quote->is_quote = qt == 0;
@@ -39,7 +39,7 @@ static int add_to_ls_2(t_list **head, int *i, char *s, char qt)
     }
     if (j)
     {
-        quote =  (t_quote *)ft_malloc(sizeof(t_quote *), 0);
+        quote =  (t_quote *)ft_malloc(sizeof(t_quote), 0);
         if (quote == NULL)
             return 0;
         quote->is_quote = qt == '"' || qt == 0;

@@ -18,7 +18,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdarg.h>
-
+#include <stdint.h>
 
 // GB
 

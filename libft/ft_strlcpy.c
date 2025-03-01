@@ -21,9 +21,9 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 		return (ft_strlen(src));
 	while (index < dstsize - 1 && src[index])
 	{
-		dst[index] = src[index];
+		*dst++ = *src++;
 		index++;
 	}
-	dst[index] = '\0';
+	*dst = '\0';
 	return (ft_strlen(src));
 }

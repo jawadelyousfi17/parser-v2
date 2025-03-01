@@ -1,124 +1,148 @@
 #include "parser.h"
 
-int count_apparence(char c, char *s)
-{
-    int r;
 
-    r = 0;
-    while (*s)
-    {
-        if (*s == c)
-            r++;
-        s++;
-    }
-    return r;
+
+static tt_token *hl_extract_token(char **s)
+{
+    tt_token *token;
+    char *start;
+
+    start = (*s)++;
+    while (**s && *start != '|' && (**s == '<' || **s == '>') )
+        (*s)++;
+    token = ft_malloc(sizeof(tt_token), 0);
+    if (token == NULL)
+        return NULL;
+    token->type = OPERATOR;
+    token->value = ft_strndup(start, *s - start);
+    if (token->value == NULL)
+        return NULL;
+    return token;
 }
 
-static int skip_split_pipe_redirect(char **s, t_list **head)
+static tt_token *hl_malloc_token(char *s)
 {
-    int i;
-    t_list *new;
-
-    new = NULL;
-    i = 0;
-    if ((*s)[i] && count_apparence((*s)[i], "|<>") != 0)
-    {
-        if ((*s)[i] && (*s)[i] == '>')
-            while ((*s)[i] && (*s)[i] == '>')
-                i++;
-        else if ((*s)[i] == '<')
-            while ((*s)[i] && (*s)[i] == '<')
-                i++;
-        else
-            i++;
-        if (ft_lstadd_back(head, ft_lstnew(ft_substr(*s, 0, i))) == 0)
-            return 0;
-        (*s) += i;
-    }
-    return 1;
-}
-
-static int skip_word(char **s, t_list **head)
-{
-    int i;
-    char last;
-
-    i = 0;
-    while ((*s)[i])
-    {
-        last = 0;
-        if ((*s)[i] == '\'' || (*s)[i] == '"')
-            last = (*s)[i++];
-        if (count_apparence((*s)[i], " |<>") != 0 && !last)
-            break;
-        while ((*s)[i] && last)
-        {
-            if ((*s)[i] == last)
-                last = 0;
-            i += last != 0;
-        }
-        i++;
-    }
-    if (i == 0)
-        return 1;
-    if (ft_lstadd_back(head, ft_lstnew(ft_substr(*s, 0, i))) == 0)
-        return 0;
-    (*s) += i;
-    return 1;
-}
-
-int skip_white_spaces(char **s)
-{
-    int i = 0;
-    while ((*s)[i] && count_apparence((*s)[i], " \t"))
-        i++;
-    (*s) += i;
-    return 1;
-}
-
-t_list *ft_split_command(char *s, char **env)
-{
-    t_list *head;
-
-    head = NULL;
-    while (*s)
-    {
-        while (*s && count_apparence(*s, " \t") != 0)
-            s++;
-        if (!*s)
-            break;
-        if (
-            !skip_split_pipe_redirect(&s, &head) ||
-            !skip_white_spaces(&s) ||
-            !skip_word(&s, &head) ||
-            !skip_white_spaces(&s))
-            return NULL;
-    }
-    return head;
-}
-
-char **ft_split_commands(char *s)
-{
-    char **result;
+    char **quoted_tokens;
+    tt_token *token;
     int i;
     int size;
-    t_list *commands;
 
-    commands = ft_split_command(s, NULL);
-    if (commands == NULL)
-        return NULL;
-    size = ft_lstsize(commands);
-    result = (char **)ft_malloc(sizeof(char **) * (size + 1), 0);
-    if (result == NULL)
+    token =  ft_malloc(sizeof(tt_token), 0);
+    if (token == NULL)
         return NULL;
     i = 0;
-    while (commands)
+    size = ft_count_quoted(s) + 1;
+    token->type = STRING;
+    quoted_tokens = ft_malloc(sizeof(char *) * size, 0);
+    if (quoted_tokens == NULL)
+        return NULL;
+    while (i < size)
+        quoted_tokens[i++] = NULL;
+    token->splited = quoted_tokens;
+
+    return token;
+}
+
+static tt_token *hl_extract_words(char **s)
+{
+    tt_token *token;
+    int j;
+    char *start;
+
+    token = hl_malloc_token(*s);
+    if (token == NULL)
+        return NULL;
+    j = 0;
+    while (**s && !ft_strchr(" \t><|", **s))
     {
-        result[i] = ft_strdup((char *)commands->content);
-        if (result[i++] == NULL)
+        start = *s;
+        if ((**s == '"' || **s == '\'') && (*s)++)
+        {
+            while (**s && **s != *start)
+                (*s)++;
+            (*s) += **s != 0;
+        }
+        else
+            while (**s && !ft_strchr(" \t><|'\"", **s))
+                (*s)++;
+        token->splited[j] =  ft_expanding(ft_strndup(start, *s - start));
+        if (token->splited[j++] == NULL)
             return NULL;
-        commands = commands->next;
+    }
+    return token;
+}
+
+
+static tt_token **hl_malloc_tokens(char *s)
+{
+    tt_token **tokens;
+    int size;
+    int i;
+
+    i = 0;
+    size = ft_count_tokens(s) + 1;
+    tokens =  ft_malloc(sizeof(tt_token *) * size, 0);
+    if (tokens == NULL)
+        return NULL;
+    while (i < size)
+    {
+        tokens[i++] = NULL;
+    }
+    return tokens;
+}
+
+
+char *hl_join_arr(char **arr)
+{
+    char *result;
+    size_t i;
+    size_t len;
+    
+    i = 0;
+    len = 0;
+    while (arr[i])
+       len += ft_strlen(arr[i++]);
+    result = ft_malloc(len + 1, 0);
+    if (!result)
+        return NULL;
+    i = 0;
+    *result = 0;
+    while (arr[i])
+    {
+        ft_strlcat(result, arr[i], len + 1);
+        i++;
     }
     return result;
+}
+
+tt_token **ft_fast_split_command(char *s)
+{
+    tt_token **tokens;
+    int index;
+
+    (1) && (tokens = hl_malloc_tokens(s), index = 0);
+    if (tokens == NULL)
+        return NULL;
+    while (*s)
+    {
+        if (hl_skip_white_spaces(&s) == 0)
+            break;
+        if (*s && ft_strchr("><|", *s))
+        {
+            tokens[index] = hl_extract_token(&s);
+            if (tokens[index++] == NULL)
+                return NULL;
+        }
+        else if (*s && !ft_strchr(" \t><|", *s))
+        {
+            tokens[index] = hl_extract_words(&s);
+            if (tokens[index] == NULL)
+                return NULL;
+            tokens[index]->value = hl_join_arr(tokens[index]->splited);
+            if (tokens[index++]->value == NULL)
+                return NULL;
+        }
+    }
+    return tokens;
 }
 
