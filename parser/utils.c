@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "../include/minishell.h"
 
 
 int hl_skip_white_spaces(char **s)

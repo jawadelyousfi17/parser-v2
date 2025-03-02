@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "../include/minishell.h"
 
 
 
@@ -44,7 +44,7 @@ static int execute_heredoc(char *file_path, char *limiter)
             free(tmp);
             break;
         }
-        if ( write(-1, tmp, ft_strlen(tmp)) == -1 || write(fd, "\n", 1) == -1)
+        if ( write(fd, tmp, ft_strlen(tmp)) == -1 || write(fd, "\n", 1) == -1)
             return (close(fd), free(tmp), 0);
         free(tmp);
     }

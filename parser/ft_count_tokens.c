@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "../include/minishell.h"
 
 static int hl_count_operators(char **s)
 {

@@ -1,7 +1,4 @@
-#include "./libft/libft.h"
-#include <stdio.h>
 #include <fcntl.h>
-#include <readline/readline.h>
 
 #define RED "\033[31m"
 #define GREEN "\033[32m"
@@ -17,7 +14,16 @@
 # define SYNTAX_ERR_PIPE "minishell: syntax error near unexpected token `|'\n"
 # define SYNTAX_ERR_REDIRECTIO "minisell: syntax error near unexpected token "
 
+// ERRORS DEFINE
+#define ERR_MALLOC 0x1
+#define UNDIFINED -1
+#define VALID_AFTER_PIPE (COMMAND | REDIRECT_INPUT | REDIRECT_OUTPUT | HERE_DOC | APPEND | COMMAND_J)
+#define VALID_AFTER_REDIRECTION (FILE_T)
+#define VALID_AFTER_HERE_DOC (LIMITER)
+#define ERR_MESSAGE "minishell: "
 
+// You may use
+// tokens types
 typedef enum e_tokens{
 	FILE_T = (1 << 0),
 	COMMAND = (1 << 1),
@@ -32,28 +38,18 @@ typedef enum e_tokens{
 	STRING = (1 << 10),
 	ERROR_TOKEN = (1 << 11),
 	FIRST = (1 << 12),
-    NO = (1 << 13),
+	NO = (1 << 13),
 	OPERATOR = (1 << 14),
 } t_tokens;
 
-
-#define VALID_AFTER_PIPE (COMMAND | REDIRECT_INPUT | REDIRECT_OUTPUT | HERE_DOC | APPEND | COMMAND_J)
-#define VALID_AFTER_REDIRECTION (FILE_T)
-#define VALID_AFTER_HERE_DOC (LIMITER)
-
-
-
+// token struc
 typedef struct s_tokens {
     char *value;
     t_tokens token;
 } t_token;
 
 
-typedef enum e_token_type {
-	T_OPERATOR,
-	T_STRING,
-} t_token_type;
-
+// token types
 typedef struct s_ttoken {
 	t_tokens type;
 	char *value;
@@ -61,51 +57,54 @@ typedef struct s_ttoken {
 } tt_token;
 
 
+
+
+// You may use
+// files redirections struct
 typedef struct s_files
 {
     t_tokens type;
     char *file;
 } t_files;
 
-
+// You may use
+// data struct
 typedef struct s_data
 {
     t_files **files;
     char **cmd;
     int pipe;
     int n_of_cmds;
+	int is_builtin;
     t_list *pipe_cmd;
 } t_data;
 
-
+// You may use
 // utils
 int is_equal(char *s, char *p);
 int hl_skip_white_spaces(char **s);
 char *ft_strndup(char *s, size_t len);
 
 
-// split commands
+// Tokenize commands
 int ft_count_tokens(char *s);
 int ft_count_quoted(char *s);
-
-t_list *ft_split_command(char *s, char **env);
-char **ft_split_commands(char *s);
+tt_token **ft_fast_split_command(char *s);
 
 // lexer
-t_list *_ft_lexer(char **s);
-char *check_syntax(t_list *tokens);
 int ft_lexing(tt_token **tokens);
 char *ft_invalid_syntax(tt_token **tokens);
+t_data *ft_initialize_data(tt_token **tokens);
 
 // join cmds
 int ft_join_cmd(tt_token **token);
 
 //expandeer
-int ft_expand_data(t_list *tokens);
-char *ft_expand(char *s);
 char *ft_expanding(char *s);
 
 // here doc
 int ft_execute_heredoc(tt_token **tokens);
 
-t_data *ft_initialize_data(tt_token **tokens);
+// init data
+// The only function you may use
+t_data *ft_init(char *s);

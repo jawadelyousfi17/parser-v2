@@ -1,6 +1,4 @@
-#include "parser.h"
-
-
+#include "../include/minishell.h"
 
 static tt_token *hl_extract_token(char **s)
 {

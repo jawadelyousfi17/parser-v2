@@ -1,4 +1,4 @@
-#include "./parser.h"
+#include "../include/minishell.h"
 
 int is_equal(char *s, char *p)
 {
