@@ -21,7 +21,7 @@
 typedef enum e_tokens{
 	FILE_T = (1 << 0),
 	COMMAND = (1 << 1),
-	ARG = (1 << 2),
+	COMMAND_J = (1 << 2),
 	PIPE = (1 << 3),
 	REDIRECT_INPUT = (1 << 4),
 	REDIRECT_OUTPUT = (1 << 5),
@@ -37,7 +37,7 @@ typedef enum e_tokens{
 } t_tokens;
 
 
-#define VALID_AFTER_PIPE (COMMAND | REDIRECT_INPUT | REDIRECT_OUTPUT | HERE_DOC | APPEND)
+#define VALID_AFTER_PIPE (COMMAND | REDIRECT_INPUT | REDIRECT_OUTPUT | HERE_DOC | APPEND | COMMAND_J)
 #define VALID_AFTER_REDIRECTION (FILE_T)
 #define VALID_AFTER_HERE_DOC (LIMITER)
 
@@ -60,6 +60,22 @@ typedef struct s_ttoken {
 	char **splited;
 } tt_token;
 
+
+typedef struct s_files
+{
+    t_tokens type;
+    char *file;
+} t_files;
+
+
+typedef struct s_data
+{
+    t_files **files;
+    char **cmd;
+    int pipe;
+    int n_of_cmds;
+    t_list *pipe_cmd;
+} t_data;
 
 
 // utils
@@ -91,3 +107,5 @@ char *ft_expanding(char *s);
 
 // here doc
 int ft_execute_heredoc(tt_token **tokens);
+
+t_data *ft_initialize_data(tt_token **tokens);

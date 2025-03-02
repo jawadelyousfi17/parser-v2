@@ -204,7 +204,7 @@ char  **hl_jn(tt_token **token, int start, int end)
         if (token[i]->type == COMMAND && !in)
         {
             in = 1;
-            token[i]->type = ARG;
+            token[i]->type = COMMAND_J;
             token[i]->splited = r;
         }
         else if (token[i]->type == COMMAND && in)
@@ -241,13 +241,13 @@ char *ft_invalid_syntax(tt_token **tokens)
     int i = 0;
     if (!tokens)
         return 0;
-    if (!tokens || tokens[i]->type == PIPE)
+    if (tokens[i]->type == PIPE)
         return tokens[i]->value;
     while (tokens[i])
     {
         if (tokens[i]->type == ERROR_TOKEN)
             return tokens[i]->value;
-        if (tokens[i]->type == PIPE && tokens[i + 1]  && !( tokens[i + 1]->type & VALID_AFTER_PIPE))
+        if (tokens[i]->type == PIPE && tokens[i + 1]  && !(tokens[i + 1]->type & VALID_AFTER_PIPE))
             return tokens[i + 1]->value;
         if (is_redirection(tokens[i]->type) && (!tokens[i + 1] || !(tokens[i + 1]->type & VALID_AFTER_REDIRECTION)))
             return tokens[i + 1] ? tokens[i + 1]->value : "newline";

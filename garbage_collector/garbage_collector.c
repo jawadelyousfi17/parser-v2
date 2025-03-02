@@ -8,39 +8,12 @@ typedef struct s_collect
     struct s_collect *next;
 } t_collect;
 
-/* Clears the entire GC list and frees all allocated memory */
-void lst_clear(t_collect *head)
-{
-    t_collect *tmp;
-    while (head)
-    {
-        tmp = head->next;
-        free(head->content);
-        free(head);
-        head = tmp;
-    }
-}
 
-/* Returns the last node in the GC list */
-t_collect *lst_last(t_collect *lst)
-{
-    if (!lst)
-        return NULL;
-    while (lst->next)
-        lst = lst->next;
-    return lst;
-}
 
-/* Adds a new node at the end of the GC list */
-void ptr_add_back(t_collect **head, t_collect *node)
+t_collect *add_back(t_collect *current, t_collect *new)
 {
-    if (!*head)
-    {
-        *head = node;
-        return;
-    }
-    t_collect *tmp = lst_last(*head);
-    tmp->next = node;
+    current->next = new;
+    return new;
 }
 
 /* Creates a new GC node to store a pointer */
@@ -54,11 +27,51 @@ t_collect *new_node(void *ptr)
     return new;
 }
 
-/*
- * ft_malloc: A malloc wrapper that tracks allocations.
- * If flag == 0, it allocates memory and adds it to the GC list.
- * If flag != 0, it frees all tracked memory and resets the GC.
- */
+void *ft_clear(t_collect **head)
+{
+    t_collect *tmp;
+    t_collect *holder;
+
+    holder = *head;
+    tmp = holder;
+    while (holder)
+    {
+        tmp = (holder)->next;
+        free((holder)->content);
+        free(holder);
+        holder = tmp;
+    }
+    *head = NULL;
+    return NULL;
+}
+
+void *_ft_malloc(size_t size, int flag)
+{
+    static t_collect *current;
+    static t_collect *head;
+    
+
+    if (flag == 0)
+    {
+        if (head == NULL)
+        {
+            head = new_node(malloc(size));
+            if (!head)
+                return ft_clear(&head);
+            current = head;
+        }
+        else
+        {
+            current = add_back(current, new_node(malloc(size)));
+            if (!current)
+                return ft_clear(&head);
+        }
+        return current->content;
+    }
+
+	return ft_clear(&head);
+}
+
 void *ft_malloc(size_t size, int flag)
 {
     static int index;
@@ -106,29 +119,3 @@ void *ft_malloc(size_t size, int flag)
 }
 
 
-
-/* Example usage */
-// int main(void)
-// {
-//     char *str1 = ft_malloc(50, 0);
-//     if (str1)
-//     {
-//         snprintf(str1, 50, "Hello, Garbage Collector!");
-//         printf("%s\n", str1);
-//     }
-
-//     int *array = ft_malloc(5 * sizeof(int), 0);
-//     if (array)
-//     {
-//         for (int i = 0; i < 5; i++)
-//             array[i] = i * 10;
-//         for (int i = 0; i < 5; i++)
-//             printf("%d ", array[i]);
-//         printf("\n");
-//     }
-
-//     /* Free all tracked allocations */
-//     ft_malloc(0, 1);
-
-//     return 0;
-// }
