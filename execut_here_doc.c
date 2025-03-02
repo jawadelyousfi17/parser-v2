@@ -36,41 +36,44 @@ static int execute_heredoc(char *file_path, char *limiter)
         return 0;
     while (1)
     {
-        tmp =  readline("> ");
+        tmp =  readline("HERE DOC > ");
         if (!tmp)
             return (close(fd), 0);
         if (tmp && is_equal(tmp, limiter))
         {
+            free(tmp);
             break;
         }
-        if ( write(fd, tmp, ft_strlen(tmp)) == -1 || write(fd, "\n", 1) == -1)
-            return (close(fd), 0);
+        if ( write(-1, tmp, ft_strlen(tmp)) == -1 || write(fd, "\n", 1) == -1)
+            return (close(fd), free(tmp), 0);
+        free(tmp);
     }
     close(fd);
     return 1;
 }
 
-int ft_execute_heredoc(t_list *tokens)
+int ft_execute_heredoc(tt_token **tokens)
 {
     char *file_path;
     t_token *data;
+    int i;
 
+    i = 0;
     file_path = NULL;
-    while (tokens->next)
+    while (tokens[i])
     {
-        data = tokens->content;
-        if (data->token == HERE_DOC)
+        if (tokens[i]->type == HERE_DOC)
         {
-            data->token = HERE_DOC_REDIRECT;
+            tokens[i]->type = HERE_DOC_REDIRECT;
             file_path = create_tmp();
             if (file_path == NULL)
                 return 0;
-            if (execute_heredoc(file_path, ((t_token *)tokens->next->content)->value) == 0)
+            if (execute_heredoc(file_path, tokens[i + 1]->value) == 0)
                 return (0);
-            ((t_token *)tokens->next->content)->token = FILE_T;
-            ((t_token *)tokens->next->content)->value = file_path;
+                tokens[i + 1]->type = FILE_T;
+                tokens[i + 1]->value = file_path;
         }
-        tokens = tokens->next;
+        i++;
     }
     return 1;
 }

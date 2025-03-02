@@ -89,7 +89,7 @@ char *ft_expanding(char *s)
     if (*s == '\'')
         r =  ft_strtrim(s, "'");
     else if (*s == '"')
-        r = ft_strtrim(s, "\"");
+        r =  ft_strtrim(s, "\"");
     else
         r = s;
     if (*s == '\'')

@@ -79,6 +79,7 @@ char **ft_split_commands(char *s);
 t_list *_ft_lexer(char **s);
 char *check_syntax(t_list *tokens);
 int ft_lexing(tt_token **tokens);
+char *ft_invalid_syntax(tt_token **tokens);
 
 // join cmds
 int ft_join_cmd(tt_token **token);
@@ -89,4 +90,4 @@ char *ft_expand(char *s);
 char *ft_expanding(char *s);
 
 // here doc
-int ft_execute_heredoc(t_list *tokens);
+int ft_execute_heredoc(tt_token **tokens);

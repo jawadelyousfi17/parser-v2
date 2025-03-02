@@ -165,10 +165,6 @@ int ft_lexing(tt_token **tokens)
             tokens[i]->type = hl_tokenizer(tokens[i], tokens[i - 1]);
         else
             tokens[i]->type = hl_tokenizer(tokens[i], NULL);
-        if (tokens[i]->type == ERROR_TOKEN)
-        {
-            return 0;
-        }
         i++;
     }
     return 1;
@@ -238,4 +234,26 @@ int ft_join_cmd(tt_token **token)
             i++;
     }
     return 1;
+}
+
+char *ft_invalid_syntax(tt_token **tokens)
+{
+    int i = 0;
+    if (!tokens)
+        return 0;
+    if (!tokens || tokens[i]->type == PIPE)
+        return tokens[i]->value;
+    while (tokens[i])
+    {
+        if (tokens[i]->type == ERROR_TOKEN)
+            return tokens[i]->value;
+        if (tokens[i]->type == PIPE && tokens[i + 1]  && !( tokens[i + 1]->type & VALID_AFTER_PIPE))
+            return tokens[i + 1]->value;
+        if (is_redirection(tokens[i]->type) && (!tokens[i + 1] || !(tokens[i + 1]->type & VALID_AFTER_REDIRECTION)))
+            return tokens[i + 1] ? tokens[i + 1]->value : "newline";
+        if (tokens[i]->type == HERE_DOC && (!tokens[i + 1] || !(tokens[i + 1]->type & VALID_AFTER_HERE_DOC)))
+            return tokens[i + 1] ? tokens[i + 1]->value : "newline";
+        i++;
+    }
+    return NULL;
 }
