@@ -18,8 +18,7 @@
 #define ERR_MALLOC 0x1
 #define UNDIFINED -1
 #define VALID_AFTER_PIPE (COMMAND | REDIRECT_INPUT | REDIRECT_OUTPUT | HERE_DOC | APPEND | COMMAND_J)
-#define VALID_AFTER_REDIRECTION (FILE_T)
-#define VALID_AFTER_HERE_DOC (LIMITER)
+#define VALID_AFTER_REDIRECTION (FILE_T | LIMITER)
 #define ERR_MESSAGE "minishell: "
 
 // You may use
@@ -84,12 +83,13 @@ typedef struct s_data
 int is_equal(char *s, char *p);
 int hl_skip_white_spaces(char **s);
 char *ft_strndup(char *s, size_t len);
-
+int is_redirection(t_tokens token);
+int is_file_limiter(t_tokens token);
 
 // Tokenize commands
 int ft_count_tokens(char *s);
 int ft_count_quoted(char *s);
-tt_token **ft_fast_split_command(char *s);
+tt_token **ft_split_command(char *s);
 
 // lexer
 int ft_lexing(tt_token **tokens);
@@ -106,5 +106,11 @@ char *ft_expanding(char *s);
 int ft_execute_heredoc(tt_token **tokens);
 
 // init data
+t_list *ft_lst_add(t_list *current, t_list *new);
+int hl_count_files(tt_token **start);
+char **hl_get_cmd(tt_token **start, int pos);
+int hl_is_pipe(tt_token **tokens);
+int ft_is_builtin(char *s);
+
 // The only function you may use
 t_data *ft_init(char *s);

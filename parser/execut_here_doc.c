@@ -1,7 +1,5 @@
 #include "../include/minishell.h"
 
-
-
 static char *create_tmp()
 {
     int i;
@@ -11,12 +9,10 @@ static char *create_tmp()
     i = 0;
     while (1)
     {
-        n =  ft_itoa(i);
+        n = ft_itoa(i);
         if (n == NULL)
             return NULL;
         file_path = ft_strjoin("/tmp/minishel_", n);
-        if (file_path == NULL)
-            return NULL;
         if (file_path == NULL)
             return NULL;
         if (access(file_path, F_OK) != 0)
@@ -36,7 +32,7 @@ static int execute_heredoc(char *file_path, char *limiter)
         return 0;
     while (1)
     {
-        tmp =  readline("HERE DOC > ");
+        tmp = readline("HERE DOC > ");
         if (!tmp)
             return (close(fd), 0);
         if (tmp && is_equal(tmp, limiter))
@@ -44,7 +40,7 @@ static int execute_heredoc(char *file_path, char *limiter)
             free(tmp);
             break;
         }
-        if ( write(fd, tmp, ft_strlen(tmp)) == -1 || write(fd, "\n", 1) == -1)
+        if (write(fd, tmp, ft_strlen(tmp)) == -1 || write(fd, "\n", 1) == -1)
             return (close(fd), free(tmp), 0);
         free(tmp);
     }
@@ -70,11 +66,10 @@ int ft_execute_heredoc(tt_token **tokens)
                 return 0;
             if (execute_heredoc(file_path, tokens[i + 1]->value) == 0)
                 return (0);
-                tokens[i + 1]->type = FILE_T;
-                tokens[i + 1]->value = file_path;
+            tokens[++i]->type = FILE_T;
+            tokens[i]->value = file_path;
         }
         i++;
     }
     return 1;
 }
-

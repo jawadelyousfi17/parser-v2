@@ -83,9 +83,7 @@ static tt_token **hl_malloc_tokens(char *s)
     if (tokens == NULL)
         return NULL;
     while (i < size)
-    {
         tokens[i++] = NULL;
-    }
     return tokens;
 }
 
@@ -113,7 +111,18 @@ char *hl_join_arr(char **arr)
     return result;
 }
 
-tt_token **ft_fast_split_command(char *s)
+void *hl_extract_join(tt_token **tokens, int index, char **s)
+{
+    tokens[index] = hl_extract_words(s);
+    if (tokens[index] == NULL)
+        return NULL;
+    tokens[index]->value = hl_join_arr(tokens[index]->splited);
+    if (tokens[index]->value == NULL)
+        return NULL;
+    return (void *)0x1;
+}
+
+tt_token **ft_split_command(char *s)
 {
     tt_token **tokens;
     int index;
@@ -133,12 +142,8 @@ tt_token **ft_fast_split_command(char *s)
         }
         else if (*s && !ft_strchr(" \t><|", *s))
         {
-            tokens[index] = hl_extract_words(&s);
-            if (tokens[index] == NULL)
-                return NULL;
-            tokens[index]->value = hl_join_arr(tokens[index]->splited);
-            if (tokens[index++]->value == NULL)
-                return NULL;
+           if (hl_extract_join(tokens, index++, &s) == NULL)
+               return NULL;
         }
     }
     return tokens;

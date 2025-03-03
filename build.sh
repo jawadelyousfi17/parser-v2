@@ -1,4 +1,4 @@
-if cc tests/test.c parser/*.c garbage_collector/garbage_collector.c libft/libft.a -lreadline -o parser_test; then
+if cc tests/test.c parser/*.c garbage_collector/garbage_collector.c libft/libft.a -lreadline $1 -o parser_test; then
 
 echo -e "\033[1;32m✅ Compilation successful!\033[0m"
 echo -e "\033[1;34mRun \033[1;33m./parser_test\033[0m"

@@ -27,3 +27,21 @@ char *ft_strndup(char *s, size_t len)
     r[i] = 0;
     return r;
 }
+
+int is_equal(char *s, char *p)
+{
+    if (ft_strlen(s) != ft_strlen(p))
+        return 0;
+    return ft_strncmp(s, p, ft_strlen(p)) == 0;
+}
+
+
+int is_redirection(t_tokens token)
+{
+    return (token == REDIRECT_INPUT || token == REDIRECT_OUTPUT || token == APPEND || token == HERE_DOC);
+}
+
+int is_file_limiter(t_tokens token)
+{
+    return (token == FILE_T || token == LIMITER);
+}

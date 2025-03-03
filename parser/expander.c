@@ -9,12 +9,13 @@ int hl_var_len(char *s)
 
 int hl_is_valid(char c)
 {
-    return ft_isalpha(c) || c == '_' ;
+    return ft_isalpha(c) || c == '_';
 }
 
 int hl_calcul_len(char *s)
 {
     int counter;
+    char *var;
 
     counter = 0;
     if (s == NULL)
@@ -28,7 +29,10 @@ int hl_calcul_len(char *s)
                 s++;
             if (*start == '?')
                 s++;
-            counter += hl_var_len(ft_strndup(start, s - start));
+            var = ft_strndup(start, s - start);
+            if (var == NULL)
+                return -1;
+            counter += hl_var_len(var);
             continue;
         }
         s++;
@@ -37,31 +41,33 @@ int hl_calcul_len(char *s)
     return counter;
 }
 
-void hl_join(char **dest, char *var)
+void *hl_join(char **dest, char *var)
 {
     char *value;
     size_t len;
 
     if (var == NULL)
-        return;
+        return NULL;
     value = getenv(var);
     if (value == NULL)
-        return;
+        return *dest;
     len = ft_strlen(value);
     ft_memcpy(*dest, value, len);
     (*dest) += len;
+    return *dest;
 }
 
 char *ft_expand(char *s)
 {
-    char *expanded;
+    char *expnd;
     char *current;
     char *start;
+    int size;
 
-    expanded = ft_malloc(sizeof(char) * (hl_calcul_len(s) + 1), 0);
-    if (s == NULL || expanded == NULL)
+    (1) && (size = hl_calcul_len(s),
+            expnd = ft_malloc(sizeof(char) * (hl_calcul_len(s) + 1), 0), current = expnd);
+    if (size == -1 || s == NULL || expnd == NULL)
         return NULL;
-    current = expanded;
     while (*s)
     {
         if (*s == '$' && *(s + 1) && (hl_is_valid(*(s + 1)) || *(s + 1) == '?'))
@@ -70,12 +76,13 @@ char *ft_expand(char *s)
             while (*s && (ft_isalnum(*s) || *s == '_'))
                 s++;
             s += *start == '?';
-            hl_join(&expanded, ft_strndup(start, s - start));
+            if (hl_join(&expnd, ft_strndup(start, s - start)) == NULL)
+                return NULL;
             continue;
         }
-        *expanded++ = *s++;
+        *expnd++ = *s++;
     }
-    *expanded = 0;
+    *expnd = 0;
     return current;
 }
 
@@ -87,9 +94,9 @@ char *ft_expanding(char *s)
         return NULL;
     r = NULL;
     if (*s == '\'')
-        r =  ft_strtrim(s, "'");
+        r = ft_strtrim(s, "'");
     else if (*s == '"')
-        r =  ft_strtrim(s, "\"");
+        r = ft_strtrim(s, "\"");
     else
         r = s;
     if (*s == '\'')
