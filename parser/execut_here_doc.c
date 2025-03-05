@@ -12,7 +12,7 @@ static char *create_tmp()
         n = ft_itoa(i);
         if (n == NULL)
             return NULL;
-        file_path = ft_strjoin("/tmp/minishel_", n);
+        file_path = ft_strjoin("/tmp/minishel_", n, 0);
         if (file_path == NULL)
             return NULL;
         if (access(file_path, F_OK) != 0)

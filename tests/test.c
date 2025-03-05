@@ -15,6 +15,8 @@
 
 #define STR "Hello\"de 'fef' de\"dede'dee\"dede\"dd'"
 
+char *get_path(char *args, char **envp);
+
 char *__trs(t_tokens token)
 {
     // FIRST,
@@ -70,13 +72,21 @@ int main(int ac, char **av, char **env)
 
     // atexit(__f);
 
+    char **new_env = ft_copy_env(env);
+
     while (1)
     {
         struct timeval start, end;
 
         char *s = readline("Enter a command: ");
-
-        t_data *data = ft_init(s);
+        if (!s)
+        {
+            ft_free_env(new_env);
+            ft_malloc(0, GB_CLEAR);
+            return 0;
+        }
+        t_data *data = ft_init(s, &new_env);
+        free(s);
         if (data == NULL)
         {
             ft_malloc(0, 1);
@@ -88,37 +98,77 @@ int main(int ac, char **av, char **env)
             t_list *tmp = data->pipe_cmd;
             while (tmp)
             {
-            printf(CYAN "PIPE\n" RESET);
-            t_data *d = (t_data *)tmp->content;
-            _display_2d_array(d->cmd);
-            int i = 0;
-            printf(BLUE "builtin: %s\n" RESET, d->is_builtin ? "yes" : "no");
-            if (d->files == NULL)
-            {
-                printf(RED "No Redirections\n" RESET);
-            }
-            while (d->files && d->files[i])
-            {
-                printf(YELLOW "File_name: %-10s " RESET BLUE "Type: %s\n" RESET, d->files[i]->file, __trs(d->files[i]->type));
-                i++;
-            }
-            tmp = tmp->next;
-            printf("\n");
+
+                t_data *d = (t_data *)tmp->content;
+
+                int pid = fork();
+
+                if (pid == 0)
+                {
+                    if (d->is_builtin)
+                    {
+                        if (is_equal(d->cmd[0], "echo"))
+                            ft_echo(d->cmd);
+                        else if (is_equal(d->cmd[0], "export"))
+                            ft_export(d->cmd, &new_env);
+                        else if (is_equal(d->cmd[0], "unset"))
+                            ft_unset(d->cmd, &new_env);
+                        else if (is_equal(d->cmd[0], "env"))
+                            ft_env(new_env);
+                        
+                    }
+                    else
+                    {
+                        execve(get_path(d->cmd[0], new_env), d->cmd, new_env);
+                        printf(CYAN "PIPE\n" RESET);
+                        _display_2d_array(d->cmd);
+                        int i = 0;
+                        printf(BLUE "builtin: %s\n" RESET, d->is_builtin ? "yes" : "no");
+                        if (d->files == NULL)
+                        {
+                            printf(RED "No Redirections\n" RESET);
+                        }
+                        while (d->files && d->files[i])
+                        {
+                            printf(YELLOW "File_name: %-10s " RESET BLUE "Type: %s\n" RESET, d->files[i]->file, __trs(d->files[i]->type));
+                            i++;
+                        }
+                        printf("\n");
+                    }
+                    exit(0);
+                }
+
+                tmp = tmp->next;
             }
         }
         else
         {
-            printf(BLUE "builtin: %s\n" RESET, data->is_builtin ? "yes" : "no");
-            _display_2d_array(data->cmd);
-            int i = 0;
-            if (data->files == NULL)
+            if (data->is_builtin)
             {
-                printf(RED "No Redirections\n" RESET);
+                if (is_equal(data->cmd[0], "echo"))
+                    ft_echo(data->cmd);
+                else if (is_equal(data->cmd[0], "export"))
+                    ft_export(data->cmd, &new_env);
+                else if (is_equal(data->cmd[0], "unset"))
+                    ft_unset(data->cmd, &new_env);
+                else if (is_equal(data->cmd[0], "env"))
+                    ft_env(new_env);
             }
-            while (data->files && data->files[i])
+            else
             {
-            printf(YELLOW "File_name: %-10s " RESET BLUE "Type: %s\n" RESET, data->files[i]->file, __trs(data->files[i]->type));
-            i++;
+                execve(get_path(data->cmd[0], new_env), data->cmd, new_env);
+                printf(BLUE "builtin: %s\n" RESET, data->is_builtin ? "yes" : "no");
+                _display_2d_array(data->cmd);
+                int i = 0;
+                if (data->files == NULL)
+                {
+                    printf(RED "No Redirections\n" RESET);
+                }
+                while (data->files && data->files[i])
+                {
+                    printf(YELLOW "File_name: %-10s " RESET BLUE "Type: %s\n" RESET, data->files[i]->file, __trs(data->files[i]->type));
+                    i++;
+                }
             }
         }
 

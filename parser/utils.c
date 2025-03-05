@@ -10,13 +10,13 @@ int hl_skip_white_spaces(char **s)
     return 1;
 }
 
-char *ft_strndup(char *s, size_t len)
+char *ft_strndup(char *s, size_t len, int flag)
 {
     char *r;
     int i;
 
     i = 0;
-    r = ft_malloc(len + 1, 0);
+    r = ft_malloc(len + 1, flag);
     if (!r)
         return NULL;
     while (s[i] && i < len)
@@ -44,4 +44,14 @@ int is_redirection(t_tokens token)
 int is_file_limiter(t_tokens token)
 {
     return (token == FILE_T || token == LIMITER);
+}
+
+int ft_matrix_len(char **matrix)
+{
+    int i;
+
+    i = 0;
+    while (matrix[i])
+        i++;
+    return i;
 }

@@ -19,7 +19,7 @@
 #define UNDIFINED -1
 #define VALID_AFTER_PIPE (COMMAND | REDIRECT_INPUT | REDIRECT_OUTPUT | HERE_DOC | APPEND | COMMAND_J)
 #define VALID_AFTER_REDIRECTION (FILE_T | LIMITER)
-#define ERR_MESSAGE "minishell: "
+#define ERR_MESSAGE "minishell"
 
 // You may use
 // tokens types
@@ -82,14 +82,15 @@ typedef struct s_data
 // utils
 int is_equal(char *s, char *p);
 int hl_skip_white_spaces(char **s);
-char *ft_strndup(char *s, size_t len);
+char *ft_strndup(char *s, size_t len, int flag);
 int is_redirection(t_tokens token);
 int is_file_limiter(t_tokens token);
+int ft_matrix_len(char **matrix);
 
 // Tokenize commands
 int ft_count_tokens(char *s);
 int ft_count_quoted(char *s);
-tt_token **ft_split_command(char *s);
+tt_token **ft_split_command(char *s, char ***env);
 
 // lexer
 int ft_lexing(tt_token **tokens);
@@ -100,7 +101,7 @@ t_data *ft_initialize_data(tt_token **tokens);
 int ft_join_cmd(tt_token **token);
 
 //expandeer
-char *ft_expanding(char *s);
+char *ft_expanding(char *s, char ***env);
 
 // here doc
 int ft_execute_heredoc(tt_token **tokens);
@@ -113,4 +114,8 @@ int hl_is_pipe(tt_token **tokens);
 int ft_is_builtin(char *s);
 
 // The only function you may use
-t_data *ft_init(char *s);
+t_data *ft_init(char *s, char ***env);
+
+// env
+char *ft_extract_var(char *s);
+

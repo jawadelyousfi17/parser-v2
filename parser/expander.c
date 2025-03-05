@@ -1,10 +1,14 @@
 #include "../include/minishell.h"
 
-int hl_var_len(char *s)
+int hl_var_len(char *s, char ***env)
 {
-    if (s == NULL)
-        return 0;
-    return ft_strlen(getenv(s));
+    int size;
+    char *value;
+
+    value = gb_get_env(*env, s);
+    size = ft_strlen(value);
+    free(value);
+    return size;
 }
 
 int hl_is_valid(char c)
@@ -12,7 +16,7 @@ int hl_is_valid(char c)
     return ft_isalpha(c) || c == '_';
 }
 
-int hl_calcul_len(char *s)
+int hl_calcul_len(char *s, char ***env)
 {
     int counter;
     char *var;
@@ -29,10 +33,10 @@ int hl_calcul_len(char *s)
                 s++;
             if (*start == '?')
                 s++;
-            var = ft_strndup(start, s - start);
+            var = ft_strndup(start, s - start, 0);
             if (var == NULL)
                 return -1;
-            counter += hl_var_len(var);
+            counter += hl_var_len(var, env);
             continue;
         }
         s++;
@@ -41,31 +45,32 @@ int hl_calcul_len(char *s)
     return counter;
 }
 
-void *hl_join(char **dest, char *var)
+void *hl_join(char **dest, char *var, char ***env)
 {
     char *value;
     size_t len;
 
     if (var == NULL)
         return NULL;
-    value = getenv(var);
+    value = gb_get_env(*env, var);
     if (value == NULL)
         return *dest;
     len = ft_strlen(value);
     ft_memcpy(*dest, value, len);
+    free(value);
     (*dest) += len;
     return *dest;
 }
 
-char *ft_expand(char *s)
+char *ft_expand(char *s, char ***env)
 {
     char *expnd;
     char *current;
     char *start;
     int size;
 
-    (1) && (size = hl_calcul_len(s),
-            expnd = ft_malloc(sizeof(char) * (hl_calcul_len(s) + 1), 0), current = expnd);
+    (1) && (size = hl_calcul_len(s, env),
+            expnd = ft_malloc(sizeof(char) * (hl_calcul_len(s, env) + 1), 0), current = expnd);
     if (size == -1 || s == NULL || expnd == NULL)
         return NULL;
     while (*s)
@@ -76,7 +81,7 @@ char *ft_expand(char *s)
             while (*s && (ft_isalnum(*s) || *s == '_'))
                 s++;
             s += *start == '?';
-            if (hl_join(&expnd, ft_strndup(start, s - start)) == NULL)
+            if (hl_join(&expnd, ft_strndup(start, s - start, 0), env) == NULL)
                 return NULL;
             continue;
         }
@@ -86,7 +91,7 @@ char *ft_expand(char *s)
     return current;
 }
 
-char *ft_expanding(char *s)
+char *ft_expanding(char *s, char ***env)
 {
     char *r;
 
@@ -94,12 +99,12 @@ char *ft_expanding(char *s)
         return NULL;
     r = NULL;
     if (*s == '\'')
-        r = ft_strtrim(s, "'");
+        r = ft_strtrim(s, "'", 0);
     else if (*s == '"')
-        r = ft_strtrim(s, "\"");
+        r = ft_strtrim(s, "\"", 0);
     else
         r = s;
     if (*s == '\'')
         return r;
-    return ft_expand(r);
+    return ft_expand(r, env);
 }

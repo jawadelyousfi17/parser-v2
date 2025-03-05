@@ -23,7 +23,7 @@ static int	is_char_set(char c, char const *set)
 	return (0);
 }
 
-char	*ft_strtrim(char const *s1, char const *set)
+char	*ft_strtrim(char const *s1, char const *set, int flag)
 {
 	size_t	start;
 	size_t	index;
@@ -33,16 +33,16 @@ char	*ft_strtrim(char const *s1, char const *set)
 	if (!s1 || !set)
 		return (NULL);
 	if (!*set)
-		return (ft_strdup(s1));
+		return (ft_strdup(s1, flag));
 	s1_len = ft_strlen(s1);
 	index = 0;
 	while (s1[index] && is_char_set(s1[index], set))
 		index++;
 	if (index == s1_len)
-		return (ft_strdup(""));
+		return (ft_strdup("", flag));
 	start = index;
 	index = s1_len - 1;
 	while (is_char_set(s1[index], set))
 		index--;
-	return (ft_substr(s1, start, index - start + 1));
+	return (ft_substr(s1, start, index - start + 1, flag));
 }

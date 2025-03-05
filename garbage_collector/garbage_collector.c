@@ -22,7 +22,6 @@ void *ft_clear(t_collect **head)
     t_collect *holder;
 
     holder = *head;
-    tmp = holder;
     while (holder)
     {
         tmp = (holder)->next;
@@ -38,7 +37,7 @@ void *ft_malloc(size_t size, int flag)
 {
     static t_collect *current;
     static t_collect *head;
-    
+
     if (flag == 0)
     {
         if (head == NULL)
@@ -56,7 +55,11 @@ void *ft_malloc(size_t size, int flag)
         }
         return current->content;
     }
-	return ft_clear(&head);
+    else if (flag == 2)
+    {
+        return malloc(size);
+    };
+    return ft_clear(&head);
 }
 
 // DRAFT
@@ -73,7 +76,7 @@ void *ft_malloc(size_t size, int flag)
 //         index = 0;
 //         max_size = 2560000;
 //         collect = malloc(max_size * sizeof(void *));
-//         if (!collect) 
+//         if (!collect)
 //             return NULL;
 //     }
 
@@ -83,16 +86,16 @@ void *ft_malloc(size_t size, int flag)
 //         {
 //             max_size *= 2;  // Double the size to minimize realloc calls
 //             new_collect = realloc(collect, max_size * sizeof(void *));
-//             if (!new_collect) 
+//             if (!new_collect)
 //                 return NULL;  // Keep the original memory on realloc failure
 //             collect = new_collect;
 
 //         }
 
 //         collect[index] = malloc(size);
-//         if (!collect[index]) 
+//         if (!collect[index])
 //             return NULL;
-        
+
 //         return collect[index++];
 //     }
 
@@ -105,5 +108,3 @@ void *ft_malloc(size_t size, int flag)
 
 //     return NULL;
 // }
-
-

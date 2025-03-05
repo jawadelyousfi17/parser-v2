@@ -108,3 +108,13 @@ t_data *ft_initialize_data(tt_token **tokens)
         return NULL;
     return data;
 }
+
+int ft_cound_pipes(t_data *data)
+{
+    t_list *pipes;
+
+    if (data->pipe == 0)
+        return 0;
+    pipes = data->pipe_cmd;
+    return ft_lstsize(pipes);
+}

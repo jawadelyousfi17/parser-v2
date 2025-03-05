@@ -76,7 +76,7 @@ char	**ft_split(char const *s, char c)
 			break ;
 		while (*s && *s != c && ++start_index)
 			s++;
-		splited_string[index] = ft_substr(s - start_index, 0, start_index);
+		splited_string[index] = ft_substr(s - start_index, 0, start_index, 0);
 		if (!splited_string[index++])
 			return (__free(splited_string));
 	}
