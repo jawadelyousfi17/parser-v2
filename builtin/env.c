@@ -12,8 +12,10 @@ int ft_env(char **env)
         if (value == NULL || !*value)
         {
             i++;
+            free(value);
             continue;
         }
+        free(value);
         if (printf("%s\n", env[i]) == -1)
         {
             ft_print_error4(": env: ", strerror(errno), NULL, NULL);

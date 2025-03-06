@@ -73,6 +73,9 @@ int main(int ac, char **av, char **env)
     // atexit(__f);
 
     char **new_env = ft_copy_env(env);
+    t_minishell *m = malloc(sizeof(t_minishell));
+    m->env = &new_env;
+    m->exit_code = 0;
 
     while (1)
     {
@@ -83,9 +86,11 @@ int main(int ac, char **av, char **env)
         {
             ft_free_env(new_env);
             ft_malloc(0, GB_CLEAR);
+            free(m);
             return 0;
         }
-        t_data *data = ft_init(s, &new_env);
+        t_data *data = ft_init(s, m);
+        m->data = data;
         free(s);
         if (data == NULL)
         {
@@ -101,8 +106,7 @@ int main(int ac, char **av, char **env)
 
                 t_data *d = (t_data *)tmp->content;
 
-                int pid = fork();
-
+                int pid = 0;
                 if (pid == 0)
                 {
                     if (d->is_builtin)
@@ -119,7 +123,6 @@ int main(int ac, char **av, char **env)
                     }
                     else
                     {
-                        execve(get_path(d->cmd[0], new_env), d->cmd, new_env);
                         printf(CYAN "PIPE\n" RESET);
                         _display_2d_array(d->cmd);
                         int i = 0;
@@ -135,7 +138,6 @@ int main(int ac, char **av, char **env)
                         }
                         printf("\n");
                     }
-                    exit(0);
                 }
 
                 tmp = tmp->next;
@@ -156,7 +158,6 @@ int main(int ac, char **av, char **env)
             }
             else
             {
-                execve(get_path(data->cmd[0], new_env), data->cmd, new_env);
                 printf(BLUE "builtin: %s\n" RESET, data->is_builtin ? "yes" : "no");
                 _display_2d_array(data->cmd);
                 int i = 0;

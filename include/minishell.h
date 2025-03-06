@@ -17,11 +17,3 @@ typedef struct s_collect
     struct s_collect *next;
 } t_collect;
 
-// minishell struct
-typedef struct s_minishell 
-{
-    t_data *data;
-    char *input;
-    char **env;
-    int exit_code;
-} t_minishell;

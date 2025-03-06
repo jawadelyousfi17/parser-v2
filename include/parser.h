@@ -78,6 +78,16 @@ typedef struct s_data
     t_list *pipe_cmd;
 } t_data;
 
+// minishell struct
+typedef struct s_minishell 
+{
+    t_data *data;
+    char *input;
+    char ***env;
+    int exit_code;
+} t_minishell;
+
+
 // You may use
 // utils
 int is_equal(char *s, char *p);
@@ -90,7 +100,7 @@ int ft_matrix_len(char **matrix);
 // Tokenize commands
 int ft_count_tokens(char *s);
 int ft_count_quoted(char *s);
-tt_token **ft_split_command(char *s, char ***env);
+tt_token **ft_split_command(char *s, t_minishell *m);
 
 // lexer
 int ft_lexing(tt_token **tokens);
@@ -101,7 +111,7 @@ t_data *ft_initialize_data(tt_token **tokens);
 int ft_join_cmd(tt_token **token);
 
 //expandeer
-char *ft_expanding(char *s, char ***env);
+char *ft_expanding(char *s, t_minishell *m);
 
 // here doc
 int ft_execute_heredoc(tt_token **tokens);
@@ -114,7 +124,7 @@ int hl_is_pipe(tt_token **tokens);
 int ft_is_builtin(char *s);
 
 // The only function you may use
-t_data *ft_init(char *s, char ***env);
+t_data *ft_init(char *s, t_minishell *m);
 
 // env
 char *ft_extract_var(char *s);

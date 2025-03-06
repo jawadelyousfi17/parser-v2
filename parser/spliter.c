@@ -41,7 +41,7 @@ static tt_token *hl_malloc_token(char *s)
     return token;
 }
 
-static tt_token *hl_extract_words(char **s, char ***env)
+static tt_token *hl_extract_words(char **s, t_minishell *m)
 {
     tt_token *token;
     int j;
@@ -63,7 +63,7 @@ static tt_token *hl_extract_words(char **s, char ***env)
         else
             while (**s && !ft_strchr(" \t><|'\"", **s))
                 (*s)++;
-        token->splited[j] =  ft_expanding(ft_strndup(start, *s - start, 0), env);
+        token->splited[j] =  ft_expanding(ft_strndup(start, *s - start, 0), m);
         if (token->splited[j++] == NULL)
             return NULL;
     }
@@ -111,9 +111,9 @@ char *hl_join_arr(char **arr)
     return result;
 }
 
-void *hl_extract_join(tt_token **tokens, int index, char **s, char ***env)
+void *hl_extract_join(tt_token **tokens, int index, char **s, t_minishell *m)
 {
-    tokens[index] = hl_extract_words(s, env);
+    tokens[index] = hl_extract_words(s, m);
     if (tokens[index] == NULL)
         return NULL;
     tokens[index]->value = hl_join_arr(tokens[index]->splited);
@@ -122,7 +122,7 @@ void *hl_extract_join(tt_token **tokens, int index, char **s, char ***env)
     return (void *)0x1;
 }
 
-tt_token **ft_split_command(char *s, char ***env)
+tt_token **ft_split_command(char *s, t_minishell *m)
 {
     tt_token **tokens;
     int index;
@@ -142,7 +142,7 @@ tt_token **ft_split_command(char *s, char ***env)
         }
         else if (*s && !ft_strchr(" \t><|", *s))
         {
-           if (hl_extract_join(tokens, index++, &s, env) == NULL)
+           if (hl_extract_join(tokens, index++, &s, m) == NULL)
                return NULL;
         }
     }

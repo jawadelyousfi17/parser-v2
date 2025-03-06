@@ -17,7 +17,7 @@ void *ft_perror(char *s)
     return NULL;
 }
 
-t_data *ft_init(char *s, char ***env)
+t_data *ft_init(char *s, t_minishell *m)
 {
     tt_token **tokens;
     char *err;
@@ -25,7 +25,7 @@ t_data *ft_init(char *s, char ***env)
 
     if (s == NULL || *s == 0)
         return NULL;
-    tokens = ft_split_command(s, env);
+    tokens = ft_split_command(s, m);
     if (tokens == NULL)
         return ft_perror(ERR_MESSAGE);
     if (ft_lexing(tokens) == 0)
