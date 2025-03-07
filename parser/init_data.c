@@ -12,13 +12,15 @@ void *hl_fill_files(tt_token ***s, t_files **files)
     {
         if ((*start)->type & (REDIRECT_INPUT | REDIRECT_OUTPUT | APPEND | HERE_DOC_REDIRECT))
         {
-            files[i] =   ft_malloc(sizeof(t_files), 0);
+            files[i] =   ft_malloc(sizeof(t_files), GB);
             if (files[i] == NULL)
                 return (void *)NULL;
             files[i]->type = (*start++)->type;
             files[i]->file = (*start)->value;
             if (files[i]->type == HERE_DOC_REDIRECT)
                 files[i]->fd = (*start)->fd;
+            else
+                files[i]->fd = -1;
             i++;
         }
         start++;

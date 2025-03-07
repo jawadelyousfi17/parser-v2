@@ -18,7 +18,7 @@ char **ft_free_env(char **env)
 
 char **ft_copy_env(char **env)
 {
-    int i;  
+    int i;
     char **env_cpy;
 
     i = 0;
@@ -64,6 +64,7 @@ char **ft_create_env()
 char **gb_get_all_env(char **env)
 {
     char **new_env;
+    char *lvl_value;
     char *lvl;
 
     if (env == NULL)
@@ -77,7 +78,11 @@ char **gb_get_all_env(char **env)
         ft_set_env(&new_env, "SHLVL", "1");
         return new_env;
     }
-    ft_set_env(&new_env, "SHLVL", ft_itoa(ft_atoi(lvl) + 1));
+    lvl_value = ft_itoa(ft_atoi(lvl) + 1);
     free(lvl);
+    if (!lvl_value)
+        return (ft_free_env(new_env));
+    ft_set_env(&new_env, "SHLVL", lvl_value);
+    free(lvl_value);
     return new_env;
 }

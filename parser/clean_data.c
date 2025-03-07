@@ -5,7 +5,7 @@ void hl_close_here_docs_files(t_files **files)
     int i;
 
     i = 0;
-    while (files[i])
+    while (files && files[i])
     {
         if (files[i]->type == HERE_DOC_REDIRECT)
         {

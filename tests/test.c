@@ -87,8 +87,24 @@ int main(int ac, char **av, char **env)
 
     // atexit(__f);
 
-    char **new_env = ft_copy_env(env);
+    char **new_env = gb_get_all_env(env);
+
+    if (!new_env)
+    {
+        ft_print_error4(": Eroor: ", strerror(errno), NULL, NULL);
+        ft_malloc(0, GB_CLEAR);
+        return 1;
+    }
+
     t_minishell *m = malloc(sizeof(t_minishell));
+    if (!m)
+    {
+        ft_print_error4(": Eroor: ", strerror(errno), NULL, NULL);
+        ft_malloc(0, GB_CLEAR);
+        return 1;
+    }
+
+
     m->env = &new_env;
     m->exit_code = 0;
 
