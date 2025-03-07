@@ -45,6 +45,7 @@ typedef enum e_tokens{
 typedef struct s_tokens {
     char *value;
     t_tokens token;
+	int fd;
 } t_token;
 
 

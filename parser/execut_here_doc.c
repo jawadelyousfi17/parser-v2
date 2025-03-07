@@ -27,7 +27,7 @@ static int execute_heredoc(char *file_path, char *limiter)
     char *tmp;
     int fd;
 
-    fd = open(file_path, O_CREAT | O_RDWR | O_EXCL, 0644);
+    fd = open(file_path, O_CREAT | O_RDWR , S_IRUSR | S_IWUSR, 0644);
     if (fd < 0)
         return 0;
     while (1)
