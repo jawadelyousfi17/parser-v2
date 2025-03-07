@@ -11,9 +11,11 @@ void *ft_perror_putstr(char *s)
     return NULL;
 }
 
-void *ft_perror(char *s)
+void *ft_perror(char *s, tt_token **tokens)
 {
     perror(s);
+    if (tokens)
+        ft_close_files(tokens);
     return NULL;
 }
 
@@ -27,19 +29,19 @@ t_data *ft_init(char *s, t_minishell *m)
         return NULL;
     tokens = ft_split_command(s, m);
     if (tokens == NULL)
-        return ft_perror(ERR_MESSAGE);
+        return ft_perror(ERR_MESSAGE, NULL);
     if (ft_lexing(tokens) == 0)
-        return ft_perror(ERR_MESSAGE);
+        return ft_perror(ERR_MESSAGE, NULL);
     err = ft_invalid_syntax(tokens);
     if (err)
         return ft_perror_putstr(err);
     if (ft_join_cmd(tokens) == 0)
-        return ft_perror(ERR_MESSAGE);
+        return ft_perror(ERR_MESSAGE, NULL);
     if (ft_execute_heredoc(tokens) == 0)
-        return ft_perror(ERR_MESSAGE);
+        return ft_perror(ERR_MESSAGE, tokens);
     data = ft_initialize_data(tokens);
     if (data == NULL)
-        return ft_perror(ERR_MESSAGE);
+        return ft_perror(ERR_MESSAGE, tokens);
     return data;
 }
 

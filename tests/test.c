@@ -67,6 +67,21 @@ void _display_2d_array(char **arr)
     printf("\n");
 }
 
+
+    void _print_fd_content(int fd, char *file)
+    {
+        int BUFFER_SIZE = 1024;
+        char buffer[BUFFER_SIZE + 1];
+        int bytes_read;
+        while ((bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0)
+        {
+            buffer[bytes_read] = '\0';
+            printf("%s", buffer);
+        }
+    }
+   
+
+
 int main(int ac, char **av, char **env)
 {
 
@@ -169,11 +184,17 @@ int main(int ac, char **av, char **env)
                 while (data->files && data->files[i])
                 {
                     printf(YELLOW "File_name: %-10s " RESET BLUE "Type: %s\n" RESET, data->files[i]->file, __trs(data->files[i]->type));
+                    if (data->files[i]->type == HERE_DOC_REDIRECT)
+                    {
+                        printf("fd: %d\n", data->files[i]->fd);
+                        _print_fd_content(data->files[i]->fd, data->files[i]->file);
+                        // close(data->files[i]->fd);
+                    }
                     i++;
                 }
             }
         }
-
+        ft_close_files_t_data(data);
         ft_malloc(0, 1);
         continue;
     }

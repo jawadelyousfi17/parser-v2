@@ -1,15 +1,37 @@
 #include "../include/minishell.h"
 
 
+void *hl_fill_files(tt_token ***s, t_files **files)
+{
+    tt_token **start;
+    int i;
 
+    i = 0;
+    start = *s;
+    while (*start && (*start)->type != PIPE)
+    {
+        if ((*start)->type & (REDIRECT_INPUT | REDIRECT_OUTPUT | APPEND | HERE_DOC_REDIRECT))
+        {
+            files[i] =   ft_malloc(sizeof(t_files), 0);
+            if (files[i] == NULL)
+                return (void *)NULL;
+            files[i]->type = (*start++)->type;
+            files[i]->file = (*start)->value;
+            if (files[i]->type == HERE_DOC_REDIRECT)
+                files[i]->fd = (*start)->fd;
+            i++;
+        }
+        start++;
+    }
+    files[i] = NULL;
+    return (void *)0x1;
+}
 
 
 t_files **hl_get_files(tt_token **start, int count)
 {
     t_files **files;
-    int i;
 
-    i = 0;
     if (count == UNDIFINED)
         count = hl_count_files(start);
     if (count == 0)
@@ -17,19 +39,8 @@ t_files **hl_get_files(tt_token **start, int count)
     files = ft_malloc(sizeof(t_files *) * (count + 1), 0);
     if (files == NULL)
         return (void *)ERR_MALLOC;
-    while (*start && (*start)->type != PIPE)
-    {
-        if ((*start)->type & (REDIRECT_INPUT | REDIRECT_OUTPUT | APPEND | HERE_DOC_REDIRECT))
-        {
-            files[i] =   ft_malloc(sizeof(t_files), 0);
-            if (files[i] == NULL)
-                return (void *)ERR_MALLOC;
-            files[i]->type = (*start++)->type;
-            files[i++]->file = (*start)->value;
-        }
-        start++;
-    }
-    files[i] = NULL;
+    if (hl_fill_files(&start, files) == NULL)
+        return (void *)ERR_MALLOC;
     return files;
 }
 

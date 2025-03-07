@@ -45,6 +45,7 @@ typedef enum e_tokens{
 typedef struct s_tokens {
     char *value;
     t_tokens token;
+	int fd;
 } t_token;
 
 
@@ -53,6 +54,7 @@ typedef struct s_ttoken {
 	t_tokens type;
 	char *value;
 	char **splited;
+	int fd;
 } tt_token;
 
 
@@ -116,6 +118,11 @@ char *ft_expanding(char *s, t_minishell *m);
 
 // here doc
 int ft_execute_heredoc(tt_token **tokens);
+
+// open files
+int ft_open_files(tt_token **tokens);
+int ft_close_files(tt_token **tokens);
+void ft_close_files_t_data(t_data *data);
 
 // init data
 t_list *ft_lst_add(t_list *current, t_list *new);
