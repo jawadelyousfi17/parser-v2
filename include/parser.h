@@ -64,6 +64,7 @@ typedef struct s_files
 {
     t_tokens type;
     char *file;
+	int fd;
 } t_files;
 
 // You may use
