@@ -34,20 +34,20 @@ static int execute_heredoc(char *file_path, char *limiter)
     {
         tmp = readline("> ");
         if (!tmp)
-            return ( unlink(file_path), -2);
-        if (tmp && is_equal(tmp, limiter))
+            return (close(fd), unlink(file_path), -2);
+        if (is_equal(tmp, limiter))
         {
             free(tmp);
             break;
         }
         if (write(fd, tmp, ft_strlen(tmp)) == -1 || write(fd, "\n", 1) == -1)
-            return ( free(tmp), unlink(file_path), -2);
+            return ( free(tmp), close(fd), unlink(file_path), -2);
         free(tmp);
     }
     close(fd);
     fd = open(file_path, O_RDONLY);
     if (unlink(file_path) == -1)
-        return -1;
+        return (close(fd), -1);
     return fd;
 }
 
