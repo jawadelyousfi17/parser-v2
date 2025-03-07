@@ -72,7 +72,7 @@ int main(int ac, char **av, char **env)
 
     // atexit(__f);
 
-    char **new_env = ft_copy_env(env);
+    char **new_env = gb_get_all_env(env);
     t_minishell *m = malloc(sizeof(t_minishell));
     m->env = &new_env;
     m->exit_code = 0;

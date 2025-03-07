@@ -65,7 +65,7 @@ char **gb_get_all_env(char **env)
 {
     char **new_env;
     char *lvl;
-
+    
     if (env == NULL)
         return ft_create_env();
     new_env = ft_copy_env(env);
