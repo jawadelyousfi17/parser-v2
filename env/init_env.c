@@ -61,11 +61,19 @@ char **ft_create_env()
     return env;
 }
 
+int hl_gb_atoi(char *s)
+{
+    if (!*s)
+        return 0;
+    return ft_atoi(s) + 1;
+}
+
 char **gb_get_all_env(char **env)
 {
     char **new_env;
+    char *lvl_value;
     char *lvl;
-    
+
     if (env == NULL)
         return ft_create_env();
     new_env = ft_copy_env(env);
@@ -77,7 +85,14 @@ char **gb_get_all_env(char **env)
         ft_set_env(&new_env, "SHLVL", "1");
         return new_env;
     }
-    ft_set_env(&new_env, "SHLVL", ft_itoa(ft_atoi(lvl) + 1));
+    if (ft_atoi(lvl) == 999)
+        lvl_value = ft_strdup("", NO_GB);
+    else
+        lvl_value = ft_itoa(hl_gb_atoi(lvl));
     free(lvl);
+    if (!lvl_value)
+        return (ft_free_env(new_env));
+    ft_set_env(&new_env, "SHLVL", lvl_value);
+    free(lvl_value);
     return new_env;
 }
