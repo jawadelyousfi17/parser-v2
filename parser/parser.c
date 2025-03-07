@@ -40,5 +40,6 @@ t_data *ft_init(char *s, t_minishell *m)
     data = ft_initialize_data(tokens);
     if (data == NULL)
         return ft_perror(ERR_MESSAGE);
+    return data;
 }
 

@@ -87,10 +87,12 @@ char *ft_invalid_syntax(tt_token **tokens)
         if (tokens[i]->type == PIPE && tokens[i + 1] && !(tokens[i + 1]->type & VALID_AFTER_PIPE))
             return tokens[i + 1]->value;
         if (is_redirection(tokens[i]->type) && (!tokens[i + 1] || !(tokens[i + 1]->type & VALID_AFTER_REDIRECTION)))
+        {
             if (tokens[i + 1])
                 return tokens[i + 1]->value;
             else
                 return "newline";
+        }
         i++;
     }
     return NULL;

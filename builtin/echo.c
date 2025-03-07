@@ -6,8 +6,9 @@ int hl_gb_echo(char **s, char *new_line, int i)
     {
         if (printf("%s", s[i]) == -1)
         {
+            ft_print_error4(": echo: ", strerror(errno), NULL, NULL);
             ft_print_error4(": echo: can't write", NULL, NULL, NULL);
-            return (ft_print_error4(": echo: ", strerror(errno), NULL, NULL), 1);
+            return (1);
         }
         if (s[i + 1])
             printf(" ");

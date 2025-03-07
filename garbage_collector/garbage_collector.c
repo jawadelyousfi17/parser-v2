@@ -38,13 +38,15 @@ void *ft_malloc(size_t size, int flag)
     static t_collect *current;
     static t_collect *head;
 
-    if (flag == 0)
+    if (flag == GB)
     {
         if (head == NULL)
         {
             head = new_node(malloc(size));
             if (!head)
                 return ft_clear(&head);
+            if (!head->content)
+                return NULL;
             current = head;
         }
         else
@@ -55,10 +57,8 @@ void *ft_malloc(size_t size, int flag)
         }
         return current->content;
     }
-    else if (flag == 2)
-    {
+    else if (flag == NO_GB)
         return malloc(size);
-    };
     return ft_clear(&head);
 }
 
