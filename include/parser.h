@@ -133,4 +133,4 @@ char *ft_extract_var(char *s);
 
 
 //expander v2
-char *ft_expand_vars(char *s, char **env);
+char* replace_vars(char *s, char **env);

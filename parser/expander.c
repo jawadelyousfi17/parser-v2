@@ -104,7 +104,8 @@ char *ft_expanding(char *s, t_minishell *m)
         r = ft_strtrim(s, "\"", 0);
     else
         r = s;
-    if (*s == '\'')
-        return r;
-    return ft_expand(r, m);
+    if (*s == '"')
+        return ft_expand(r, m);
+    
+    return r;
 }

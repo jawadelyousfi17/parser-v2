@@ -91,10 +91,10 @@ int main(int ac, char **av, char **env)
             return 0;
         }
 
-        ft_expand_vars(s, new_env);
-        continue;
+        s = replace_vars(s, new_env);
+        printf("Command: %s\n", s);
 
-        add_history(s);
+        // add_history(s);
         
         t_data *data = ft_init(s, m);
         m->data = data;
