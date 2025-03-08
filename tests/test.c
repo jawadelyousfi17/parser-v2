@@ -151,11 +151,11 @@ int main(int ac, char **av, char **env)
                 if (is_equal(data->cmd[0], "echo"))
                     ft_echo(data->cmd);
                 else if (is_equal(data->cmd[0], "export"))
-                    ft_export(data->cmd, &new_env);
+                    ft_export(data->cmd, m->env);
                 else if (is_equal(data->cmd[0], "unset"))
-                    ft_unset(data->cmd, &new_env);
+                    ft_unset(data->cmd, m->env);
                 else if (is_equal(data->cmd[0], "env"))
-                    ft_env(new_env);
+                    ft_env(*(m->env));
             }
             else
             {
