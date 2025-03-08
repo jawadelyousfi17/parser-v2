@@ -9,7 +9,7 @@ int ft_env(char **env)
     while (env[i])
     {
         value = gb_get_env(env, ft_extract_var(env[i]));
-        if (value == NULL || !*value)
+        if (value == NULL)
         {
             i++;
             free(value);

@@ -1,7 +1,7 @@
 rm -rf libparser.a
 if cc -c parser/*.c garbage_collector/garbage_collector.c builtin/*.c env/*.c tests/path.c  ; then
 ar -r libparser.a *.o 
-cc -o test libparser.a libft/libft.a -lreadline tests/test.c
+cc -o test libparser.a libft/libft.a -lreadline -fsanitize=address tests/test.c
 rm -rf *.o
 
 echo "\033[1;32m✅ Compilation successful!\033[0m"

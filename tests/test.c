@@ -90,6 +90,9 @@ int main(int ac, char **av, char **env)
             free(m);
             return 0;
         }
+
+        add_history(s);
+        
         t_data *data = ft_init(s, m);
         m->data = data;
         free(s);

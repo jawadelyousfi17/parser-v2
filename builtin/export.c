@@ -53,6 +53,13 @@ int hl_append_to_env(char *var_name, char *var_value, char ***env)
     return 1;
 }
 
+int hl_set_env_export(char *var_name, char *var_value, char ***env)
+{
+    if (ft_set_env(env, var_name, var_value) == -1)
+        return 0;
+    return 1;
+}
+
 int hl_export(char *s, int type, char ***env)
 {
     char *var_name;
@@ -61,6 +68,8 @@ int hl_export(char *s, int type, char ***env)
     var_name = ft_get_var_name(&s);
     if (!var_name)
         return 0;
+    if (!*s)
+       return hl_set_env_export(var_name, NULL, env);
     if (*s && type == NORMAL_EXPORT)
         s++;
     else if (*s && type == APPEND_EXPORT)
@@ -69,11 +78,7 @@ int hl_export(char *s, int type, char ***env)
     if (!var_value)
         return 0;
     if (type == NORMAL_EXPORT)
-    {
-        if (ft_set_env(env, var_name, var_value) == -1)
-            return 0;
-        return 1;
-    }
+       return hl_set_env_export(var_name, var_value, env);
     return hl_append_to_env(var_name, var_value, env);
 }
 
