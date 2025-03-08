@@ -30,34 +30,10 @@ char *ft_expand_vars(char *s, char **env)
     qt = 0;
     while (*s)
     {
-        if (*s == '"')
-        {
-            s++;
-            if (*s == '$' && _hl_is_valid(*(s + 1)))
-            {
-                var_name = _get_var_name(&s);
-                printf("var_name: %s\n", var_name);
-            }
-            while (*s && *s != '"')
-                s++;
-            s++;
-        }
-        while (*s && *s !='"')
-        {
-            if (*s == '\'')
-            {
-                s++;
-                while (*s && *s != '\'')
-                    s++;
-                s++;
-            }
-            if (*s == '$' && _hl_is_valid(*(s + 1)))
-            {
-                var_name = _get_var_name(&s);
-                printf("var_name: %s\n", var_name);
-            }
-            s++;
-        }
+       __skip_white_spaces(&s);
+       __find_quotes(&s, &qt);
+       __expand__until_quotes(&s, qt);
+       
         
     }
     return NULL;
