@@ -62,7 +62,6 @@ static tt_token *hl_extract_words(char **s, t_minishell *m)
         else
             while (**s && !ft_strchr(" \t><|'\"", **s))
                 (*s)++;
-        printf("splited: %s\n", ft_strndup(start, *s - start, 0));
         token->splited[j] =  ft_expanding(ft_strndup(start, *s - start, 0), m);
         if (token->splited[j++] == NULL)
             return NULL;
