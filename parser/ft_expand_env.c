@@ -23,12 +23,17 @@ void skip_single_quotes(char **s, t_list **head)
 
 char *split_and_add_quotes(char *var)
 {
+    if (!var)
+        return NULL;
     char **splited = ft_split(var, ' ');
     int i = 0;
     while (splited[i])
     {
         splited[i] = ft_strjoin("\'", splited[i], NO_GB);
-        splited[i] = ft_strjoin(splited[i], "\' ", NO_GB);
+        if (splited[i + 1])
+         splited[i] = ft_strjoin(splited[i], "\' ", NO_GB);
+        else
+            splited[i] = ft_strjoin(splited[i], "\'", NO_GB);
         i++;
     }
     char *res = malloc(i + 1);
