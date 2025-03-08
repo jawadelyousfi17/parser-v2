@@ -2,7 +2,7 @@
 
 int ft_is_valid_identifier(char *s)
 {
-    if (!ft_strchr(VALID_START, *s))
+    if (!*s || !ft_strchr(VALID_START, *s))
         return 0;
     s++;
     while (*s)

@@ -17,3 +17,8 @@ int ft_echo(char **s);
 int ft_unset(char **args, char ***env);
 
 int ft_env(char **env);
+
+
+
+// expander
+char *ft_get_var_name(char **s);

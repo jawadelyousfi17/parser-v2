@@ -72,7 +72,7 @@ int main(int ac, char **av, char **env)
 
     // atexit(__f);
 
-    char **new_env = gb_get_all_env(env);
+    char **new_env = ft_copy_env(env);
     t_minishell *m = malloc(sizeof(t_minishell));
     m->env = &new_env;
     m->exit_code = 0;
@@ -90,6 +90,12 @@ int main(int ac, char **av, char **env)
             free(m);
             return 0;
         }
+
+        ft_expand_vars(s, new_env);
+        continue;
+
+        add_history(s);
+        
         t_data *data = ft_init(s, m);
         m->data = data;
         free(s);

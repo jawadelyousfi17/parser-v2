@@ -130,3 +130,7 @@ t_data *ft_init(char *s, t_minishell *m);
 // env
 char *ft_extract_var(char *s);
 
+
+
+//expander v2
+char *ft_expand_vars(char *s, char **env);
